@@ -20,9 +20,9 @@ router.get("/signup", isLoggedOut, (req, res) => {
 
 router.post("/signup", isLoggedOut, (req, res) => {
   const { email, password, fullName } = req.body;
-  console.log(req.body)
+  //console.log(req.body)
 
-  if (!email) {
+  /*if (!email) {
     return res.status(400).render("auth/signup", {
       errorMessage: "Please provide your email.",
     });
@@ -32,7 +32,7 @@ router.post("/signup", isLoggedOut, (req, res) => {
     return res.status(400).render("auth/signup", {
       errorMessage: "Your password needs to be at least 8 characters long.",
     });
-  }
+  }*/
 
   // Search the database for a user with the email submitted in the form
   User.findOne({ email }).then((found) => {
@@ -100,7 +100,7 @@ router.post("/login", isLoggedOut, (req, res, next) => {
     });
   }
 
-  // Search the database for a user with the username submitted in the form
+  // Search the database for a user with the email submitted in the form
   User.findOne({ email })
     .then((user) => {
       // If the user isn't found, send the message that user provided wrong credentials
@@ -110,7 +110,7 @@ router.post("/login", isLoggedOut, (req, res, next) => {
         });
       }
 
-      // If user is found based on the username, check if the in putted password matches the one saved in the database
+      // If user is found based on the email, check if the in putted password matches the one saved in the database
       bcrypt.compare(password, user.password).then((isSamePassword) => {
         if (!isSamePassword) {
           return res.status(400).render("auth/login", {
@@ -131,7 +131,11 @@ router.post("/login", isLoggedOut, (req, res, next) => {
     });
 });
 
-router.get("/logout", isLoggedIn, (req, res) => {
+router.get("/profile", isLoggedIn, (req, res, next) => {
+  res.render("auth/profile");
+});
+
+router.post("/logout", isLoggedIn, (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       return res
